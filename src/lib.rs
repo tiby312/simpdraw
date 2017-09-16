@@ -1,7 +1,7 @@
 
 
 
-pub trait Vertex{
+pub trait Vertex: std::default::Default+std::clone::Clone{
     fn set_pos(&mut self,x:f32,y:f32);
     fn set_alpha(&mut self,val:f32);
 }
@@ -17,37 +17,41 @@ pub trait Draw{
 
 
 
-/*
+
 pub struct Wrap<T:Draw>{
-    id:usize,
+    start_index:usize,
     pub a:T
-}
-pub struct Drawer{
-    vecs:Vec<(Vec<Vertex>,glium::VertexBuffer<Vertex>)>
-}
 
-impl Drawer{
-    pub fn new()->Drawer{
-        Drawer{vecs:Vec::new()}
-    }
-
-    pub fn add<T:Draw>(&mut self, display: &glium::Display,aa:T)->Wrap<T>{
-        let a=aa.get_num_verts();
-
-        let mut v=Vec::new();
-        v.resize(a,Vertex{position:[0.0,0.0],color:[0.0,0.0,0.0,0.0]});
     
-        self.vecs.push((v,(glium::VertexBuffer::empty_dynamic(display, a).unwrap())));
+}
+pub struct Drawer<V:Vertex>{
+    verts:Vec<V>
+}
 
-        Wrap{id:self.vecs.len()-1,a:aa}
+impl<V:Vertex> Drawer<V>{
+    pub fn new()->Drawer<V>{
+        Drawer{verts:Vec::new()}
     }
-    pub fn draw<T:Draw>(&mut self,a:&Wrap<T>){
-        let z=&mut self.vecs[a.id];
-        //let (&mut x,&mut y)=*z;
-        a.a.update_verts(&mut z.0);
-        z.1.write(&mut z.0);
+
+    pub fn add<T:Draw>(&mut self,aa:T)->Wrap<T>{
+        let a=aa.get_num_verts();
+        let curlen=self.verts.len();
+        
+        self.verts.resize(curlen+a,Default::default());
+    
+        Wrap{start_index:curlen,a:aa}
     }
-}*/
+
+    pub fn get_verts(&self)->&[V]{
+        &self.verts
+    }
+
+    pub fn update_verts<T:Draw>(&mut self,a:&Wrap<T>){
+        
+        let range=&mut self.verts[a.start_index..a.start_index+a.a.get_num_verts()];
+        a.a.update_verts(range);
+    }
+}
 
 
 
