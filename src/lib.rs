@@ -28,7 +28,7 @@ impl<V:Vertex> Drawer<V>{
         Drawer{verts:Vec::new()}
     }
 
-    pub fn add<T:Draw,Z>(&mut self,length:usize)->Wrap{
+    pub fn add(&mut self,length:usize)->Wrap{
         
         let curlen=self.verts.len();
         
