@@ -12,7 +12,7 @@ pub trait Draw{
 
     //As input, given verticies used from last time.
     //so do not have to update every property.
-    fn update_verts<T:Vertex>(&self,fa:&mut [T]);
+    fn update_verts<T:Vertex,Z>(&self,fa:&mut [T],extra:Z);
 }
 
 
@@ -20,9 +20,7 @@ pub trait Draw{
 
 pub struct Wrap<T:Draw>{
     start_index:usize,
-    pub a:T
-
-    
+    a:T
 }
 pub struct Drawer<V:Vertex>{
     verts:Vec<V>
@@ -46,10 +44,10 @@ impl<V:Vertex> Drawer<V>{
         &self.verts
     }
 
-    pub fn update_verts<T:Draw>(&mut self,a:&Wrap<T>){
+    pub fn update_verts<T:Draw,Z>(&mut self,a:&Wrap<T>,extra:Z){
         
         let range=&mut self.verts[a.start_index..a.start_index+a.a.get_num_verts()];
-        a.a.update_verts(range);
+        a.a.update_verts(range,extra);
     }
 }
 
