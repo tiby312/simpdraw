@@ -8,11 +8,11 @@ pub trait Vertex: std::default::Default+std::clone::Clone{
 
 
 pub trait Draw{
-    fn get_num_verts(&self)->usize;
+    fn get_num_verts<Z>(&self,extra:&Z)->usize;
 
     //As input, given verticies used from last time.
     //so do not have to update every property.
-    fn update_verts<T:Vertex,Z>(&self,fa:&mut [T],extra:Z);
+    fn update_verts<T:Vertex,Z>(&self,fa:&mut [T],extra:&Z);
 }
 
 
@@ -31,8 +31,8 @@ impl<V:Vertex> Drawer<V>{
         Drawer{verts:Vec::new()}
     }
 
-    pub fn add<T:Draw>(&mut self,aa:T)->Wrap<T>{
-        let a=aa.get_num_verts();
+    pub fn add<T:Draw,Z>(&mut self,aa:T,extra:&Z)->Wrap<T>{
+        let a=aa.get_num_verts(extra);
         let curlen=self.verts.len();
         
         self.verts.resize(curlen+a,Default::default());
@@ -44,9 +44,9 @@ impl<V:Vertex> Drawer<V>{
         &self.verts
     }
 
-    pub fn update_verts<T:Draw,Z>(&mut self,a:&Wrap<T>,extra:Z){
+    pub fn update_verts<T:Draw,Z>(&mut self,a:&Wrap<T>,extra:&Z){
         
-        let range=&mut self.verts[a.start_index..a.start_index+a.a.get_num_verts()];
+        let range=&mut self.verts[a.start_index..a.start_index+a.a.get_num_verts(extra)];
         a.a.update_verts(range,extra);
     }
 }
