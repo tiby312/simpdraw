@@ -1,5 +1,12 @@
-
-
+//!
+//! A simple vertex memory manager. 
+//!
+//! Users can allocate a range of verticies and look up them to modify them later.
+//! Provides a function to return a slice of all the verticies combined
+//! so that they may all be sent to the gpu to be drawn in batch.
+//!
+//!
+//!
 
 pub trait Vertex: std::default::Default+std::clone::Clone{
     fn set_pos(&mut self,x:f32,y:f32);
@@ -43,16 +50,5 @@ impl<V:Vertex> Drawer<V>{
 
     pub fn get_verts_mut<'a>(&'a mut self,a:&'a Wrap)->&'a mut [V]{
         &mut self.verts[a.start_index..a.start_index+a.length]
-    }
-}
-
-
-
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
     }
 }
