@@ -13,15 +13,7 @@ pub trait Vertex: std::default::Default+std::clone::Clone{
     fn set_alpha(&mut self,val:f32);
 }
 
-
-pub trait Draw{
-    fn get_num_verts<Z>(&self,extra:&Z)->usize;
-}
-
-
-
-
-pub struct Wrap{
+pub struct RangeID{
     start_index:usize,
     length:usize
 }
@@ -31,24 +23,29 @@ pub struct Drawer<V:Vertex>{
 }
 
 impl<V:Vertex> Drawer<V>{
+
+    #[inline(always)]
     pub fn new()->Drawer<V>{
         Drawer{verts:Vec::new()}
     }
 
-    pub fn add(&mut self,length:usize)->Wrap{
+    #[inline(always)]
+    pub fn add(&mut self,length:usize)->RangeID{
         
         let curlen=self.verts.len();
         
         self.verts.resize(curlen+length,Default::default());
     
-        Wrap{start_index:curlen,length:length}
+        RangeID{start_index:curlen,length:length}
     }
 
-    pub fn get_all_verts(&self)->&[V]{
+    #[inline(always)]
+    pub fn get_all_ranges(&self)->&[V]{
         &self.verts
     }
 
-    pub fn get_verts_mut<'a>(&'a mut self,a:&'a Wrap)->&'a mut [V]{
+    #[inline(always)]
+    pub fn get_range_mut<'a>(&'a mut self,a:&'a RangeID)->&'a mut [V]{
         &mut self.verts[a.start_index..a.start_index+a.length]
     }
 }
